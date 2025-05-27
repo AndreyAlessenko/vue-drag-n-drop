@@ -1,9 +1,10 @@
 <template>
-  <h1>Hello Vue Drag-n-Drop</h1>
+<h1>Hello</h1>
 </template>
 
-<script setup>
+<script setup lang="ts">
 </script>
+
 
 <style scoped>
 </style>
