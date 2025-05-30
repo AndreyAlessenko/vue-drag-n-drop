@@ -1,11 +1,14 @@
 <template>
-  <SvgDrawerContainer />
+  <SvgCanvasContainer />
 </template>
 
 <script setup lang="ts">
-import SvgDrawerContainer from './modules/svg-canvas/containers/SvgDrawerContainer.vue';
+import SvgCanvasContainer from './modules/svg-canvas/containers/SvgCanvasContainer.vue'
 </script>
 
-
-<style scoped>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
 </style>
