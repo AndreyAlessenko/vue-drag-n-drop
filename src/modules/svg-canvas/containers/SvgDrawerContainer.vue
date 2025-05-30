@@ -6,6 +6,10 @@
 import { SVG, Svg, G } from '@svgdotjs/svg.js'
 import { onMounted, ref, onUnmounted } from 'vue'
 import '@svgdotjs/svg.draggable.js'
+import { useLogerStore } from '../store/logger'
+import { storeToRefs } from 'pinia'
+
+const { loggerArray } = storeToRefs(useLogerStore())
 
 const container = ref<HTMLDivElement>()
 let draw: Svg | null = null
@@ -33,8 +37,8 @@ const createAddButton = (draw: G) => {
 const createCanvas = () => {
   if (!container.value) return
 
-  const width = window.innerWidth - 20
-  const height = window.innerHeight - 20
+  const width = container.value.clientWidth
+  const height = container.value.clientHeight - 20
 
   if (draw) {
     draw.remove()
@@ -52,19 +56,39 @@ const createCanvas = () => {
   createAddButton(canvas)
 }
 const addSquare = () => {
-  if (!canvas) return
-
+  if (!canvas || !container.value) return
+  const width = container.value.clientWidth
+  const height = container.value.clientHeight - 20
   const squareSize = 100
-  const centerX = (window.innerWidth - squareSize) / 2
-  const centerY = (window.innerHeight - squareSize) / 2
+  const centerX = (width - squareSize) / 2
+  const centerY = (height - squareSize) / 2
 
-  canvas
+  const rect = canvas
     .rect(squareSize, squareSize)
     .move(centerX, centerY)
     .fill('#f06')
     .stroke({ color: 'black', width: 2 })
     .radius(5)
     .draggable()
+
+  rect.on('beforedrag ', () => {
+    loggerArray.value.unshift({
+      date: new Date(),
+      message: 'Начало перемещения квадрата',
+    })
+  })
+
+  rect.on('dragend ', () => {
+    loggerArray.value.unshift({
+      date: new Date(),
+      message: 'Конец перемещения квадрата',
+    })
+  })
+
+  loggerArray.value.unshift({
+    date: new Date(),
+    message: 'Добавлен квадрат',
+  })
 }
 const handleResize = () => {
   createCanvas()
@@ -82,10 +106,7 @@ onUnmounted(() => {
 
 <style scoped>
 .svg-container {
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>
